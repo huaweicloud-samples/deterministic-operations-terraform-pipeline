@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    TERRAFORM_DIRECTORY: "."
+    CHECKOV_SKIPS: ""
+
+phases:
+  install:
+    commands:
+      - pip3 install checkov==$CHECKOV_VERSION
+      - checkov --version
+  pre_build:
+    commands:
+      - cd $TERRAFORM_DIRECTORY
+  build:
+    commands:
+      - checkov -d . --framework terraform --skip-download $CHECKOV_SKIPS || true
+  post_build:
+    commands:
+      - echo "SAST scan completed on $(date)"
+
+artifacts:
+  files:
+    - "**/results_json.json"
+  name: sast-$(date +%Y-%m-%d)

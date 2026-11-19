@@ -1,0 +1,27 @@
+version: 0.2
+
+env:
+  variables:
+    TERRAFORM_DIRECTORY: "."
+    TAGS: ""
+
+phases:
+  install:
+    commands:
+      - curl -fsSL https://github.com/martysways/tagnag/releases/download/v$TAGNAG_VERSION/tagnag_Linux_x86_64.tar.gz -o tagnag.tar.gz
+      - tar -xzf tagnag.tar.gz -C /usr/local/bin
+      - tagnag --version
+  pre_build:
+    commands:
+      - cd $TERRAFORM_DIRECTORY
+  build:
+    commands:
+      - tagnag --tags "$TAGS"
+  post_build:
+    commands:
+      - echo "TagNAG check completed on $(date)"
+
+artifacts:
+  files:
+    - "**/*"
+  name: tags-$(date +%Y-%m-%d)

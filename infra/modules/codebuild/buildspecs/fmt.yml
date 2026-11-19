@@ -1,0 +1,24 @@
+version: 0.2
+
+env:
+  variables:
+    TERRAFORM_DIRECTORY: "."
+
+phases:
+  install:
+    runtime-versions:
+      terraform: $TF_VERSION
+  pre_build:
+    commands:
+      - cd $TERRAFORM_DIRECTORY
+  build:
+    commands:
+      - terraform fmt -check -recursive
+  post_build:
+    commands:
+      - echo "Format check completed on $(date)"
+
+artifacts:
+  files:
+    - "**/*"
+  name: fmt-$(date +%Y-%m-%d)

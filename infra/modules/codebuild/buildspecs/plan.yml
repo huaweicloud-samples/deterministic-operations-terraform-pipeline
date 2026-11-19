@@ -1,0 +1,27 @@
+version: 0.2
+
+env:
+  variables:
+    TERRAFORM_DIRECTORY: "."
+
+phases:
+  install:
+    runtime-versions:
+      terraform: $TF_VERSION
+  pre_build:
+    commands:
+      - cd $TERRAFORM_DIRECTORY
+  build:
+    commands:
+      - terraform init -input=false
+      - terraform validate
+      - terraform plan -out=tfplan
+      - terraform show -no-color tfplan > plan_output.txt
+  post_build:
+    commands:
+      - echo "Plan completed on $(date)"
+
+artifacts:
+  files:
+    - plan_output.txt
+  name: plan-$(date +%Y-%m-%d)

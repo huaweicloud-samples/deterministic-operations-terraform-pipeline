@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    TERRAFORM_DIRECTORY: "."
+
+phases:
+  install:
+    commands:
+      - curl -fsSL https://github.com/terraform-linters/tflint/releases/download/v$TFLINT_VERSION/tflint_linux_amd64.zip -o tflint.zip
+      - unzip tflint.zip -d /usr/local/bin
+      - tflint --version
+  pre_build:
+    commands:
+      - cd $TERRAFORM_DIRECTORY
+  build:
+    commands:
+      - tflint --recursive
+  post_build:
+    commands:
+      - echo "Lint completed on $(date)"
+
+artifacts:
+  files:
+    - "**/*"
+  name: lint-$(date +%Y-%m-%d)
